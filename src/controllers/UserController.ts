@@ -3,10 +3,10 @@ import { Param, Body, Get, Post, Put, Delete, JsonController } from "routing-con
 import { Repository } from "typeorm";
 import { User } from "../entities/User";
 import { Service } from "typedi";
-import { BaseController } from "./BaseController";
 import { Email } from '../entities/Email';
 import { myGetRepository } from '../db/Connection';
 import { Role } from "../entities/Role";
+import { Group } from '../entities/Group';
 
 
 @JsonController('/users')
@@ -67,6 +67,24 @@ export class UserController {
         const i =u.roles.findIndex(r=>r.id == rid);
         if(i>=0){
             u.roles.splice(i,1);
+            return this.repo.save(u);
+        }else{
+            return null;
+        }
+        
+    }
+    @Post("/:id/groups")
+    async addGroup(@Param("id") id: number, @Body() group: Group) {
+        let u = await this.repo.findOneById(id,{ relations: ["groups"]});
+        u.groups.push(group);
+        return this.repo.save(u);
+    }
+    @Delete("/:id/groups/:rid")
+    async removeGroup(@Param("id") id: number, @Param("rid") gid: number) {
+        let u = await this.repo.findOneById(id, { relations: ["groups"] });
+        const i =u.groups.findIndex(g=>g.id == gid);
+        if(i>=0){
+            u.groups.splice(i,1);
             return this.repo.save(u);
         }else{
             return null;

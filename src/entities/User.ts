@@ -8,16 +8,23 @@ import { Group } from "./Group";
 @Entity()
 export class User {
 
+    constructor(){
+        this.groups = [];
+        this.emails =[];
+        this.roles =[];
+        this.profile = new UserProfile();
+    }
+
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({unique:true})
     username: string;
 
-    @Column()
+    @Column({})
     password: string;
     
-    @OneToOne(type=>UserProfile,userProfile=>userProfile.user)    
+    @OneToOne(type=>UserProfile,userProfile=>userProfile.user,{cascadeAll:true})    
     profile: UserProfile
 
     @ManyToMany(type=>Role,role=>role.users)

@@ -7,7 +7,7 @@ export class Email {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({unique:true})
     email: string;
 
     @ManyToOne(type=>User,user=>user.emails)    

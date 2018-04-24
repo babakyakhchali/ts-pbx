@@ -7,10 +7,10 @@ export class UserProfile {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable:true})
     name: string;
 
-    @Column()
+    @Column({nullable:true})
     family: string;
     
     @OneToOne(type=>User,user=>user.profile)

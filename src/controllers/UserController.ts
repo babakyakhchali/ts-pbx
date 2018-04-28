@@ -26,18 +26,19 @@ export class UserController {
     }
 
     @Post("/")
-    post(@Body() user: User) {
+    create(@Body() user: User) {
         return this.repo.save(user);
     }
 
     @Put("/:id")
-    put(@Param("id") id: number, @Body() user: User) {
+    update(@Param("id") id: number, @Body() user: User) {
         return this.repo.save(user);
     }
 
     @Delete("/:id")
-    remove(@Param("id") id: number) {
-        return this.repo.deleteById(id);
+    async remove(@Param("id") id: number) {
+        await this.repo.deleteById(id);
+        return 'ok';
     }
     @Post("/:id/emails")
     async addEmail(@Param("id") id: number, @Body() email: Email) {
@@ -51,8 +52,9 @@ export class UserController {
     }
 
     @Delete("/:id/emails/:eid")
-    removeEmail(@Param("id") id: number, @Param("eid") eid: number) {
-        return myGetRepository(Email).deleteById(id);
+    async removeEmail(@Param("id") id: number, @Param("eid") eid: number) {
+        await myGetRepository(Email).deleteById(eid);
+        return 'ok';
     }
 
     @Post("/:id/roles")

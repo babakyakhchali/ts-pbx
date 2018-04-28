@@ -22,12 +22,12 @@ export class FsDomainController{
     }
 
     @Post("/")
-    post(@Body() d: FsDomain) {
+    create(@Body() d: FsDomain) {
         return this.repo.save(d);
     }
 
     @Put("/:id")
-    put(@Param("id") id: number, @Body() d: FsDomain) {
+    update(@Param("id") id: number, @Body() d: FsDomain) {
         return this.repo.save(d);
     }
 

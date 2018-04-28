@@ -19,12 +19,12 @@ export class GroupController{
     }
 
     @Post("/")
-    post(@Body() b: Group) {
+    create(@Body() b: Group) {
         return this.repo.save(b);
     }
 
     @Put("/:id")
-    put(@Param("id") id: number, @Body() b: Group) {
+    update(@Param("id") id: number, @Body() b: Group) {
         return this.repo.save(b);
     }
 

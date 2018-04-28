@@ -3,20 +3,19 @@ import { UserProfile } from "./UserProfile";
 import { Role } from "./Role";
 import { Email } from "./Email";
 import { Group } from "./Group";
+import { BaseEntity } from './BaseEntity';
 
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
 
     constructor(){
+        super();
         this.groups = [];
         this.emails =[];
         this.roles =[];
         this.profile = new UserProfile();
     }
-
-    @PrimaryGeneratedColumn()
-    id: number;
 
     @Column({unique:true})
     username: string;

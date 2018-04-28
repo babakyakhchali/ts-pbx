@@ -1,11 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { FsVar, FsVarArrayTransformer } from './FsVar';
 import { FsUser } from './FsUser';
+import { BaseEntity } from './BaseEntity';
 @Entity()
-export class FsDomain {
-    @PrimaryGeneratedColumn()
-    id: number;
-
+export class FsDomain extends BaseEntity {
+    
     @Column({unique:true})
     name: string;
 

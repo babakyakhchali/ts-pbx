@@ -1,0 +1,8 @@
+profile(name=p.name)
+  aliases
+  gateways
+  domains
+  settings
+    if p.settings
+      each s in p.settings.items
+        param(name=s.name,value=s.value)

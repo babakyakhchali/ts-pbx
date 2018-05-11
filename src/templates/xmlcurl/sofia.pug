@@ -1,0 +1,8 @@
+configuration(name="sofia.conf")
+  global_settings
+    if settings
+      each s in settings.items
+        param(name=s.name,value=s.value)
+  profiles
+    each p in profiles
+      include sipprofile.pug

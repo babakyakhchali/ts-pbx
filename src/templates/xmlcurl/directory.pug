@@ -1,27 +1,3 @@
 document(type="freeswitch/xml")
-  section(name="directory")
-    each domain in domains
-      domain(name=domain.name)
-        params
-          if domain.params
-            each p in domain.params
-              param(name=p.name,value=p.value)
-        variables
-          if domain.vars
-            each v in domain.vars
-              variable(name=v.name,value=v.value)
-        groups
-          group(name="default")
-            users
-              each user in domain.users
-                user(id=user.uid)
-                  if user.params
-                    params
-                      param(name="password", value=user.password)
-                      each p in user.params
-                        param(name=p.name,value=p.value)
-                  if user.vars
-                    variables
-                    each v in user.vars
-                      variable(name=v.name,value=v.value)
+  include directory-section.pug
                 

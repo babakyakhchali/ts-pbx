@@ -3,11 +3,11 @@ section(name="directory")
     domain(name=domain.name)
       params
         if domain.params
-          each p in domain.params
+          each p in domain.params.items
             param(name=p.name,value=p.value)
       variables
         if domain.vars
-          each v in domain.vars
+          each v in domain.vars.items
             variable(name=v.name,value=v.value)
       groups
         group(name="default")
@@ -17,10 +17,10 @@ section(name="directory")
                 if user.params
                   params
                     param(name="password", value=user.password)
-                    each p in user.params
+                    each p in user.params.items
                       param(name=p.name,value=p.value)
                 if user.vars
                   variables
-                  each v in user.vars
+                  each v in user.vars.items
                     variable(name=v.name,value=v.value)
                 

@@ -1,4 +1,4 @@
-import { JsonController, Get,Post,Put,Delete,Param,Body } from 'routing-controllers';
+import { JsonController, Get, Post, Put, Delete, Param, Body, OnUndefined } from 'routing-controllers';
 import { myGetRepository } from '../db/Connection';
 import { Device } from '../entities/Device';
 import { DeviceLine } from '../entities/DeviceLine';
@@ -28,27 +28,33 @@ export class DeviceController{
     }
 
     @Put("/:id")
+    @OnUndefined(204)
     update(@Param("id") id: number, @Body() b: Device) {
-        return this.repo.save(b);
+        return this.repo.updateById(id,b);
     }
 
     @Delete("/:id")
+    @OnUndefined(204)
     async remove(@Param("id") id: number) {
-        await this.repo.deleteById(id);
-        return 'ok';
+        return this.repo.deleteById(id);        
     }
 
     @Post("/:id/lines")
     async addLine(@Param("id") id:number,@Body() line:DeviceLine){
-        let d = await this.repo.findOneById(id,{relations:['lines']});
-        d.lines.push(line);
-        return this.repo.save(d);
+        let d = await this.repo.findOneById(id);
+        if(!d){
+            return;
+        }
+        line.device = d;        
+        return this.lineRepo.save(d);
     }
     @Put("/:id/lines/:lid")
+    @OnUndefined(204)
     updateLine(@Param("id") id:number,@Body() line:DeviceLine){
-        return this.lineRepo.save(line);
+        return this.lineRepo.updateById(id,line);
     }
     @Delete("/:id/lines/:lid")
+    @OnUndefined(204)
     async removeLine(@Param("id") id:number,@Param("lid") lid:number){
         await this.lineRepo.removeById(lid);
         return 'ok';

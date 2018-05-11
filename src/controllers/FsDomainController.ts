@@ -1,4 +1,4 @@
-import { JsonController, Get, Post, Put, Delete, Param,Body } from 'routing-controllers';
+import { JsonController, Get, Post, Put, Delete, Param, Body, OnUndefined } from 'routing-controllers';
 import { FsDomain } from "../entities/FsDomain";
 import { myGetRepository } from '../db/Connection';
 import { FsUser } from '../entities/FsUser';
@@ -27,11 +27,13 @@ export class FsDomainController{
     }
 
     @Put("/:id")
+    @OnUndefined(204)
     update(@Param("id") id: number, @Body() d: FsDomain) {
-        return this.repo.save(d);
+        return this.repo.updateById(id,d);
     }
 
     @Delete("/:id")
+    @OnUndefined(204)
     remove(@Param("id") id: number) {
         return this.repo.deleteById(id);
     }
@@ -49,16 +51,21 @@ export class FsDomainController{
     @Post("/:id/users")
     async postUser(@Param("id") id: number,@Body() u: FsUser) {
         let d = await this.repo.findOneById(id);
+        if(!d){
+            return;
+        }
         u.domain = d;
         return this.userRepo.save(u);
     }
 
     @Put("/:id/users/:uid")
+    @OnUndefined(204)
     putUser(@Param("uid") id: number, @Body() u: FsUser) {
-        return this.userRepo.save(u);
+        return this.userRepo.updateById(id,u);
     }
 
     @Delete("/:id/users/:uid")
+    @OnUndefined(204)
     removeUser(@Param("uid") id: number) {
         return this.userRepo.deleteById(id);
     }

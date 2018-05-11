@@ -1,4 +1,4 @@
-import { Param, Body, Get, Post, Put, Delete, JsonController } from "routing-controllers";
+import { Param, Body, Get, Post, Put, Delete, JsonController, OnUndefined } from 'routing-controllers';
 
 import { Repository } from "typeorm";
 import { User } from "../entities/User";
@@ -7,6 +7,7 @@ import { Email } from '../entities/Email';
 import { myGetRepository } from '../db/Connection';
 import { Role } from "../entities/Role";
 import { Group } from '../entities/Group';
+import { findAndRemove } from '../utils/misc';
 
 
 @JsonController('/users')
@@ -17,12 +18,12 @@ export class UserController {
 
     @Get("/")
     getAll() {
-        return this.repo.find({ relations: ["emails","roles"] });
+        return this.repo.find({ relations: ["emails", "roles","groups"] });
     }
 
     @Get("/:id")
     getOne(@Param("id") id: number) {
-        return this.repo.findOneById(id);
+        return this.repo.findOneById(id,{ relations: ["emails", "roles","groups"] });
     }
 
     @Post("/")
@@ -31,67 +32,74 @@ export class UserController {
     }
 
     @Put("/:id")
+    @OnUndefined(204)
     update(@Param("id") id: number, @Body() user: User) {
-        return this.repo.save(user);
+        return this.repo.updateById(id, user);
     }
 
     @Delete("/:id")
+    @OnUndefined(204)
     async remove(@Param("id") id: number) {
-        await this.repo.deleteById(id);
-        return 'ok';
+        return this.repo.deleteById(id);
     }
     @Post("/:id/emails")
     async addEmail(@Param("id") id: number, @Body() email: Email) {
         let u = await this.repo.findOneById(id);
+        if (!u) {
+            return;
+        }
         email.user = u;
         return myGetRepository(Email).save(email);
     }
     @Put("/:id/emails/:eid")
+    @OnUndefined(204)
     async editEmail(@Param("id") id: number, @Param("eid") eid: number, @Body() email: Email) {
         return myGetRepository(Email).save(email);
     }
 
     @Delete("/:id/emails/:eid")
+    @OnUndefined(204)
     async removeEmail(@Param("id") id: number, @Param("eid") eid: number) {
-        await myGetRepository(Email).deleteById(eid);
-        return 'ok';
+        return myGetRepository(Email).deleteById(eid);
     }
 
     @Post("/:id/roles")
     async addRole(@Param("id") id: number, @Body() role: Role) {
-        let u = await this.repo.findOneById(id,{ relations: ["roles"]});
+        let u = await this.repo.findOneById(id, { relations: ["roles"] });
+        if (!u) {
+            return;
+        }
         u.roles.push(role);
         return this.repo.save(u);
     }
     @Delete("/:id/roles/:rid")
+    @OnUndefined(204)
     async removeRole(@Param("id") id: number, @Param("rid") rid: number) {
         let u = await this.repo.findOneById(id, { relations: ["roles"] });
-        const i =u.roles.findIndex(r=>r.id == rid);
-        if(i>=0){
-            u.roles.splice(i,1);
+        if(u && findAndRemove(u.roles,r => r.id == rid)){
             return this.repo.save(u);
         }else{
-            return null;
+            return;
         }
-        
     }
     @Post("/:id/groups")
     async addGroup(@Param("id") id: number, @Body() group: Group) {
-        let u = await this.repo.findOneById(id,{ relations: ["groups"]});
+        let u = await this.repo.findOneById(id, { relations: ["groups"] });
+        if(!u){
+            return;
+        }
         u.groups.push(group);
         return this.repo.save(u);
     }
     @Delete("/:id/groups/:rid")
+    @OnUndefined(204)
     async removeGroup(@Param("id") id: number, @Param("rid") gid: number) {
         let u = await this.repo.findOneById(id, { relations: ["groups"] });
-        const i =u.groups.findIndex(g=>g.id == gid);
-        if(i>=0){
-            u.groups.splice(i,1);
+        if(u && findAndRemove(u.groups,g => g.id == gid)){
             return this.repo.save(u);
         }else{
-            return null;
+            return;
         }
-        
     }
 
 }

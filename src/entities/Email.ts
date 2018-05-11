@@ -8,6 +8,6 @@ export class Email extends BaseEntity{
     @Column({unique:true})
     email: string;
 
-    @ManyToOne(type=>User,user=>user.emails)    
+    @ManyToOne(type=>User,user=>user.emails,{onDelete:"CASCADE"})    
     user:User;
 }
